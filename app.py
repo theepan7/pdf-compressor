@@ -9,16 +9,9 @@ COMPRESSED_FOLDER = 'compressed'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(COMPRESSED_FOLDER, exist_ok=True)
 
-@app.route('/')
+    @app.route('/')
 def home():
-    return '''
-        <h2>PDF Compressor is running!</h2>
-        <p>Send a POST request to <code>/compress</code> with a PDF file to compress it.</p>
-        <form method="post" action="/compress" enctype="multipart/form-data">
-            <input type="file" name="file" accept=".pdf" required>
-            <button type="submit">Compress PDF</button>
-        </form>
-    '''
+    return render_template('index.html')
 
 @app.route('/compress', methods=['POST'])
 def compress_pdf():
