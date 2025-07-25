@@ -1,4 +1,4 @@
-from flask import Flask, request, send_file
+from flask import Flask, request, send_file, render_template
 import os
 import subprocess
 import uuid
@@ -9,7 +9,7 @@ COMPRESSED_FOLDER = 'compressed'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(COMPRESSED_FOLDER, exist_ok=True)
 
-    @app.route('/')
+@app.route('/')
 def home():
     return render_template('index.html')
 
