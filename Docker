@@ -1,0 +1,22 @@
+# Use base image with Python and apt
+FROM python:3.10-slim
+
+# Install Ghostscript
+RUN apt-get update && \
+    apt-get install -y ghostscript && \
+    apt-get clean
+
+# Set work directory
+WORKDIR /app
+
+# Copy files
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+# Expose the port Flask runs on
+EXPOSE 5000
+
+# Run the app
+CMD ["python", "app.py"]
