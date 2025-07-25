@@ -20,6 +20,11 @@ def home():
         </form>
     '''
 
+@app.route('/compress', methods=['POST'])
+def compress_pdf():
+    uploaded_file = request.files.get('file')
+    if not uploaded_file or uploaded_file.filename == '':
+        return 'No file uploaded', 400
 
     input_path = os.path.join(UPLOAD_FOLDER, f"{uuid.uuid4()}.pdf")
     output_path = os.path.join(COMPRESSED_FOLDER, f"{uuid.uuid4()}_compressed.pdf")
@@ -29,7 +34,7 @@ def home():
         "gs",
         "-sDEVICE=pdfwrite",
         "-dCompatibilityLevel=1.4",
-        "-dPDFSETTINGS=/ebook",
+        "-dPDFSETTINGS=/ebook",  # Adjust compression level here
         "-dNOPAUSE",
         "-dQUIET",
         "-dBATCH",
@@ -44,6 +49,7 @@ def home():
         return 'Compression failed', 500
     finally:
         os.remove(input_path)
+        # Optionally, you may remove output_path after sending if you want to keep storage clean
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
