@@ -12,19 +12,18 @@ os.makedirs(COMPRESSED_FOLDER, exist_ok=True)
 @app.route('/compress', methods=['POST'])
 def compress_pdf():
     uploaded_file = request.files.get('file')
-    if not uploaded_file or uploaded_file.filename == '':
+    if not uploaded_file:
         return 'No file uploaded', 400
 
     input_path = os.path.join(UPLOAD_FOLDER, f"{uuid.uuid4()}.pdf")
     output_path = os.path.join(COMPRESSED_FOLDER, f"{uuid.uuid4()}_compressed.pdf")
-
     uploaded_file.save(input_path)
 
     gs_cmd = [
         "gs",
         "-sDEVICE=pdfwrite",
         "-dCompatibilityLevel=1.4",
-        "-dPDFSETTINGS=/ebook",  # or /screen, /printer, /prepress, /default
+        "-dPDFSETTINGS=/ebook",
         "-dNOPAUSE",
         "-dQUIET",
         "-dBATCH",
@@ -35,8 +34,8 @@ def compress_pdf():
     try:
         subprocess.run(gs_cmd, check=True)
         return send_file(output_path, as_attachment=True)
-    except subprocess.CalledProcessError as e:
-        return f"Compression failed: {str(e)}", 500
+    except subprocess.CalledProcessError:
+        return 'Compression failed', 500
     finally:
         os.remove(input_path)
 
