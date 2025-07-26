@@ -1,63 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>PDF Compressor</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f0f4f8;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .container {
-            background: white;
-            padding: 40px 60px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            max-width: 400px;
-            text-align: center;
-        }
-        h1 {
-            margin-bottom: 20px;
-            color: #333;
-        }
-        p {
-            margin-bottom: 30px;
-            color: #666;
-        }
-        input[type="file"] {
-            margin-bottom: 20px;
-        }
-        button {
-            background-color: #0078d7;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            font-size: 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        button:hover {
-            background-color: #005ea3;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PDF Tools</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script>
+    function showSection(id) {
+      document.querySelectorAll('.section').forEach(div => div.style.display = 'none');
+      document.getElementById(id).style.display = 'block';
+    }
+  </script>
 </head>
 <body>
-    <div class="container">
-        <h1>PDF Compressor</h1>
-        <p>Upload your PDF file and get a compressed version instantly.</p>
-        <form method="post" action="/compress" enctype="multipart/form-data">
-            <input type="file" name="file" accept=".pdf" required />
-            <br />
-            <button type="submit">Compress PDF</button>
-        </form>
+  <div class="container">
+    <h1>PDF Toolkit</h1>
+    <div class="nav">
+      <button onclick="showSection('compress')">Compress</button>
+      <button onclick="showSection('merge')">Merge</button>
+      <button onclick="showSection('split')">Split</button>
     </div>
+
+    <!-- Compress -->
+    <div class="section" id="compress" style="display:block;">
+      <h2>Compress PDF</h2>
+      <form method="post" action="/compress" enctype="multipart/form-data">
+        <input type="file" name="file" accept=".pdf" required /><br><br>
+        <button type="submit">Compress</button>
+      </form>
+    </div>
+
+    <!-- Merge -->
+    <div class="section" id="merge" style="display:none;">
+      <h2>Merge PDFs</h2>
+      <form method="post" action="/merge" enctype="multipart/form-data">
+        <input type="file" name="files" multiple accept=".pdf" required /><br><br>
+        <button type="submit">Merge</button>
+      </form>
+    </div>
+
+    <!-- Split -->
+    <div class="section" id="split" style="display:none;">
+      <h2>Split PDF</h2>
+      <form method="post" action="/split" enctype="multipart/form-data">
+        <input type="file" name="file" accept=".pdf" required /><br>
+        From page: <input type="number" name="start" required /><br>
+        To page: <input type="number" name="end" required /><br><br>
+        <button type="submit">Split</button>
+      </form>
+    </div>
+  </div>
 </body>
 </html>
