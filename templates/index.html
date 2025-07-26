@@ -1,54 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>PDF Tools</title>
-  <link rel="stylesheet" href="/static/style.css">
-  <script>
-    function showSection(id) {
-      document.querySelectorAll('.section').forEach(div => div.style.display = 'none');
-      document.getElementById(id).style.display = 'block';
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PDF Toolkit</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #f5f7fa;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 40px;
+  }
+
+  .container {
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    width: 380px;
+    padding: 30px 35px 40px;
+  }
+
+  h1 {
+    margin-bottom: 25px;
+    font-weight: 600;
+    color: #222;
+    text-align: center;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+  }
+
+  .tab-btn {
+    flex: 1;
+    background: #e4e9f0;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 0;
+    cursor: pointer;
+    font-weight: 600;
+    color: #555;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  .tab-btn.active {
+    background: #0078d7;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0,120,215,0.3);
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  input[type="file"], input[type="number"] {
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    margin-bottom: 20px;
+    transition: border-color 0.3s;
+  }
+
+  input[type="file"]:focus, input[type="number"]:focus {
+    border-color: #0078d7;
+    outline: none;
+  }
+
+  label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #333;
+  }
+
+  button {
+    background-color: #0078d7;
+    color: white;
+    border: none;
+    padding: 12px 0;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s;
+  }
+
+  button:hover {
+    background-color: #005ea3;
+  }
+
+  /* Hide all sections by default */
+  .section {
+    display: none;
+    animation: fadeIn 0.4s ease forwards;
+  }
+
+  /* Show active section */
+  .section.active {
+    display: block;
+  }
+
+  @keyframes fadeIn {
+    from {opacity: 0; transform: translateY(10px);}
+    to {opacity: 1; transform: translateY(0);}
+  }
+
+  /* Responsive */
+  @media (max-width: 420px) {
+    .container {
+      width: 90vw;
+      padding: 20px;
     }
-  </script>
+  }
+</style>
 </head>
 <body>
-  <div class="container">
-    <h1>PDF Toolkit</h1>
-    <div class="nav">
-      <button onclick="showSection('compress')">Compress</button>
-      <button onclick="showSection('merge')">Merge</button>
-      <button onclick="showSection('split')">Split</button>
-    </div>
+<div class="container">
+  <h1>PDF Toolkit</h1>
 
-    <!-- Compress -->
-    <div class="section" id="compress" style="display:block;">
-      <h2>Compress PDF</h2>
-      <form method="post" action="/compress" enctype="multipart/form-data">
-        <input type="file" name="file" accept=".pdf" required /><br><br>
-        <button type="submit">Compress</button>
-      </form>
-    </div>
-
-    <!-- Merge -->
-    <div class="section" id="merge" style="display:none;">
-      <h2>Merge PDFs</h2>
-      <form method="post" action="/merge" enctype="multipart/form-data">
-        <input type="file" name="files" multiple accept=".pdf" required /><br><br>
-        <button type="submit">Merge</button>
-      </form>
-    </div>
-
-    <!-- Split -->
-    <div class="section" id="split" style="display:none;">
-      <h2>Split PDF</h2>
-      <form method="post" action="/split" enctype="multipart/form-data">
-        <input type="file" name="file" accept=".pdf" required /><br>
-        From page: <input type="number" name="start" required /><br>
-        To page: <input type="number" name="end" required /><br><br>
-        <button type="submit">Split</button>
-      </form>
-    </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showSection('compress')">Compress</button>
+    <button class="tab-btn" onclick="showSection('merge')">Merge</button>
+    <button class="tab-btn" onclick="showSection('split')">Split</button>
   </div>
+
+  <div id="compress" class="section active">
+    <form method="post" action="/compress" enctype="multipart/form-data">
+      <label for="compressFile">Select PDF to Compress</label>
+      <input type="file" id="compressFile" name="file" accept=".pdf" required />
+      <button type="submit">Compress PDF</button>
+    </form>
+  </div>
+
+  <div id="merge" class="section">
+    <form method="post" action="/merge" enctype="multipart/form-data">
+      <label for="mergeFiles">Select PDFs to Merge</label>
+      <input type="file" id="mergeFiles" name="files" multiple accept=".pdf" required />
+      <button type="submit">Merge PDFs</button>
+    </form>
+  </div>
+
+  <div id="split" class="section">
+    <form method="post" action="/split" enctype="multipart/form-data">
+      <label for="splitFile">Select PDF to Split</label>
+      <input type="file" id="splitFile" name="file" accept=".pdf" required />
+      <label for="startPage">From page:</label>
+      <input type="number" id="startPage" name="start" min="1" required />
+      <label for="endPage">To page:</label>
+      <input type="number" id="endPage" name="end" min="1" required />
+      <button type="submit">Split PDF</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  function showSection(id) {
+    // Hide all sections
+    document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+    // Remove active from all buttons
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    // Show current section
+    document.getElementById(id).classList.add('active');
+    // Set active button
+    event.currentTarget.classList.add('active');
+  }
+</script>
 </body>
 </html>
