@@ -1,4 +1,4 @@
-from flask import Flask, request, send_file, render_template
+from flask import Flask, request, send_file, render_template, redirect, url_for
 import os
 import uuid
 import subprocess
@@ -15,8 +15,10 @@ os.makedirs(PROCESSED_FOLDER, exist_ok=True)
 def index():
     return render_template('index.html')
 
-@app.route('/compress', methods=['POST'])
+@app.route('/compress', methods=['GET', 'POST'])
 def compress():
+    if request.method == 'GET':
+        return render_template('compress.html')  # Add this file to show upload form
     uploaded_file = request.files['file']
     if uploaded_file.filename.endswith('.pdf'):
         file_id = str(uuid.uuid4())
@@ -41,8 +43,10 @@ def compress():
             return f"Compression failed: {e}", 500
     return "Invalid file", 400
 
-@app.route('/merge', methods=['POST'])
+@app.route('/merge', methods=['GET', 'POST'])
 def merge():
+    if request.method == 'GET':
+        return render_template('merge.html')  # Add this HTML file
     files = request.files.getlist('files')
     merger = PdfMerger()
     file_id = str(uuid.uuid4())
@@ -58,8 +62,10 @@ def merge():
     except Exception as e:
         return f"Merging failed: {e}", 500
 
-@app.route('/split', methods=['POST'])
+@app.route('/split', methods=['GET', 'POST'])
 def split():
+    if request.method == 'GET':
+        return render_template('split.html')  # Add this HTML file
     file = request.files['file']
     start = int(request.form['start'])
     end = int(request.form['end'])
@@ -81,7 +87,4 @@ def split():
     return "Invalid file", 400
 
 if __name__ == "__main__":
-    import os
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
-
+    app.run(debug=True)
